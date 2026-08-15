@@ -8,7 +8,12 @@ import '../widgets/focus_goal_card.dart';
 import '../widgets/task_tile.dart';
 import '/core/theme/app_colors.dart';
 import '../widgets/active_goal_card.dart';
+
+import '../../../goals/data/datasources/goals_local_datasource.dart';
+import '../../../goals/data/local/goal_local_model.dart';
+import '../../../goals/presentation/screens/create_goal_screen.dart';
 import '../../../goals/presentation/screens/goal_detail_screen.dart';
+import '../widgets/goal_list_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,6 +23,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+
+  List<GoalLocalModel> _goals = [];
+  bool _isLoadingGoals = true;
+
   void _toggleTask(int index) {
     setState(() {
       _todayTasks[index]['completed'] =
@@ -25,7 +35,153 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  int _currentIndex = 0;
+  final GoalsLocalDataSource _localDataSource = GoalsLocalDataSource();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGoals();
+  }
+
+  //access data form locla storage.
+  Future<void> _loadGoals() async {
+    final goals = await _localDataSource.getGoals();
+
+    debugPrint('GOALS LOADED: ${goals.length}');
+
+    for (final goal in goals) {
+      debugPrint('GOAL: ${goal.title} | progress: ${goal.progress}');
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _goals = goals;
+      _isLoadingGoals = false;
+    });
+  }
+
+  //temp chnge for local data action or removal.
+  /*Future<void> _loadGoals() async {
+    final goals = await _localDataSource.getGoals();
+
+    if (!mounted) return;
+
+    setState(() {
+      _goals = goals;
+      _isLoadingGoals = false;
+    });
+  }*/
+
+  int _daysRemaining(GoalLocalModel goal) {
+    if (goal.targetDate == null) {
+      return 0;
+    }
+
+    final difference = goal.targetDate!.difference(DateTime.now()).inDays;
+
+    return difference < 0 ? 0 : difference;
+  }
+
+  Future<void> _openCreateGoal() async {
+    final created = await Navigator.of(
+      context,
+    ).push<bool>(MaterialPageRoute(builder: (_) => const CreateGoalScreen()));
+
+    if (created == true) {
+      await _loadGoals();
+    }
+  }
+
+  Widget _buildEmptyGoals() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.08)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.track_changes_rounded,
+            size: 28,
+            color: AppColors.gold,
+          ),
+
+          const SizedBox(height: AppSpacing.lg),
+
+          Text(
+            'Nothing competing\nfor your attention.',
+            style: AppTextStyles.title.copyWith(fontSize: 22),
+          ),
+
+          const SizedBox(height: AppSpacing.sm),
+
+          Text(
+            'Create your first goal and start making progress.',
+            style: AppTextStyles.bodySmall,
+          ),
+
+          const SizedBox(height: AppSpacing.lg),
+
+          Text(
+            'Tap + to begin',
+            style: AppTextStyles.label.copyWith(color: AppColors.goldDark),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGoalsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('My Goals', style: AppTextStyles.title),
+            Text('${_goals.length}', style: AppTextStyles.bodySmall),
+          ],
+        ),
+
+        const SizedBox(height: AppSpacing.md),
+
+        ..._goals.map(
+          (goal) => Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: GoalListCard(
+              title: goal.title,
+              category: goal.category,
+              progress: goal.progress,
+              isCompleted: goal.isCompleted,
+              onTap: () async {
+                final changed = await Navigator.of(context).push<bool>(
+                  MaterialPageRoute(
+                    builder: (_) => GoalDetailScreen(
+                      goalId: goal.id,
+                      title: goal.title,
+                      category: goal.category,
+                      progress: goal.progress,
+                      daysRemaining: _daysRemaining(goal),
+                    ),
+                  ),
+                );
+
+                if (changed == true) {
+                  await _loadGoals();
+                }
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   final List<Map<String, dynamic>> _todayTasks = [
     {'title': 'Finish authentication', 'completed': false},
     {'title': 'Design goal screen', 'completed': false},
@@ -91,30 +247,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   const SizedBox(height: AppSpacing.xxl),
 
-                  FocusGoalCard(
-                    title: 'Build my\nGoal App',
-                    progress: 0.72,
-                    daysRemaining: 3,
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const GoalDetailScreen(
-                            title: 'Build my Goal App',
-                            category: 'Productivity',
-                            progress: 0.72,
-                            daysRemaining: 3,
+                  if (_isLoadingGoals)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(AppSpacing.xxl),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  else if (_goals.isEmpty)
+                    _buildEmptyGoals()
+                  else
+                    //Focus Goal card.
+                    FocusGoalCard(
+                      title: _goals.first.title,
+                      progress: _goals.first.progress,
+                      daysRemaining: _daysRemaining(_goals.first),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => GoalDetailScreen(
+                              goalId: _goals.first.id,
+                              title: _goals.first.title,
+                              category: _goals.first.category,
+                              progress: _goals.first.progress,
+                              daysRemaining: _daysRemaining(_goals.first),
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
 
                   const SizedBox(height: AppSpacing.xxl),
 
                   _buildActiveGoals(),
 
                   const SizedBox(height: AppSpacing.xxl),
+                  _buildGoalsSection(),
 
+                  const SizedBox(height: AppSpacing.xxl),
                   _buildTodaySection(),
                   const SizedBox(height: AppSpacing.xxl),
 
@@ -137,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
 
-      floatingActionButton: const AppAddButton(),
+      floatingActionButton: AppAddButton(onPressed: _openCreateGoal),
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );

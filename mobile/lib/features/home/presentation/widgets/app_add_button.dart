@@ -4,7 +4,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../goals/presentation/screens/create_goal_screen.dart';
 
 class AppAddButton extends StatelessWidget {
-  const AppAddButton({super.key});
+  final VoidCallback onPressed;
+
+  const AppAddButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -12,10 +14,14 @@ class AppAddButton extends StatelessWidget {
       color: Colors.transparent,
       shape: const CircleBorder(),
       child: InkWell(
-        onTap: () {
-          Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (_) => const CreateGoalScreen()));
+        onTap: () async {
+          final created = await Navigator.of(context).push<bool>(
+            MaterialPageRoute(builder: (_) => const CreateGoalScreen()),
+          );
+
+          if (created == true) {
+            // Home will reload the newly created goal.
+          }
         },
         customBorder: const CircleBorder(),
         child: Container(

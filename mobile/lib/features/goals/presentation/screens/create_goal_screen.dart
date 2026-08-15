@@ -7,7 +7,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../data/local/goal_local_model.dart';
-import '../../data/local/goals_local_datasource.dart';
+import '../../data/datasources/goals_local_datasource.dart';
 
 class CreateGoalScreen extends StatefulWidget {
   const CreateGoalScreen({super.key});

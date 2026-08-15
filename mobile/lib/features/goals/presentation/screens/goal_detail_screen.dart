@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../data/datasources/goals_local_datasource.dart';
+import '../../data/local/goal_local_model.dart';
 
 class GoalDetailScreen extends StatefulWidget {
+  final String goalId;
   final String title;
   final String category;
   final double progress;
@@ -12,6 +15,7 @@ class GoalDetailScreen extends StatefulWidget {
 
   const GoalDetailScreen({
     super.key,
+    required this.goalId,
     required this.title,
     required this.category,
     required this.progress,
@@ -26,6 +30,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
   late double _progress;
 
   final List<bool> _tasks = [true, false, false];
+  final GoalsLocalDataSource _localDataSource = GoalsLocalDataSource();
 
   @override
   void initState() {
@@ -81,11 +86,32 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
     );
   }
 
+  Future<void> _saveProgress() async {
+    final goal = await _localDataSource.getGoalById(widget.goalId);
+
+    if (goal == null) return;
+
+    final updatedGoal = GoalLocalModel(
+      id: goal.id,
+      title: goal.title,
+      category: goal.category,
+      description: goal.description,
+      startDate: goal.startDate,
+      targetDate: goal.targetDate,
+      progress: _progress,
+      isCompleted: _progress >= 1.0,
+      createdAt: goal.createdAt,
+      updatedAt: DateTime.now(),
+    );
+
+    await _localDataSource.updateGoal(updatedGoal);
+  }
+
   Widget _buildTopBar(BuildContext context) {
     return Row(
       children: [
         GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
+          onTap: () => Navigator.of(context).pop(true),
           child: Container(
             width: 42,
             height: 42,
@@ -371,7 +397,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
 
   Widget _task(String title, bool completed, int index) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         setState(() {
           _tasks[index] = !_tasks[index];
 
@@ -379,6 +405,8 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
 
           _progress = completedTasks / _tasks.length;
         });
+
+        await _saveProgress();
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 220),

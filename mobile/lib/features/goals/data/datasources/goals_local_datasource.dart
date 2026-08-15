@@ -1,5 +1,5 @@
 import '../../../../core/storage/local_storage.dart';
-import 'goal_local_model.dart';
+import '../local/goal_local_model.dart';
 
 class GoalsLocalDataSource {
   Future<void> saveGoal(GoalLocalModel goal) async {
