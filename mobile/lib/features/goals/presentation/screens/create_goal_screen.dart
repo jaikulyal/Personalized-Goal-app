@@ -112,8 +112,6 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
         _isSaving = false;
       });
 
-      _showMessage('Goal created');
-
       Navigator.of(context).pop(true);
     } catch (error) {
       if (!mounted) return;

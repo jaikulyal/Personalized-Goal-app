@@ -12,73 +12,95 @@ class TaskTile extends StatelessWidget {
   const TaskTile({
     super.key,
     required this.title,
-    required this.completed,
+    this.completed = false,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: 15,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: 14,
+      ),
+      decoration: BoxDecoration(
+        color: completed
+            ? AppColors.gold.withValues(alpha: 0.10)
+            : AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: completed
+              ? AppColors.gold.withValues(alpha: 0.30)
+              : AppColors.primary.withValues(alpha: 0.07),
         ),
-        decoration: BoxDecoration(
-          color: completed ? AppColors.goldSoft : AppColors.surface,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: completed
-                ? AppColors.gold.withValues(alpha: 0.35)
-                : AppColors.border,
-          ),
-        ),
-        child: Row(
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              width: 25,
-              height: 25,
-              decoration: BoxDecoration(
-                color: completed ? AppColors.gold : Colors.transparent,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: completed ? AppColors.gold : AppColors.secondary,
-                  width: 1.5,
+          onTap: onTap,
+          child: Row(
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutCubic,
+                width: 25,
+                height: 25,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: completed ? AppColors.gold : Colors.transparent,
+                  border: Border.all(
+                    color: completed
+                        ? AppColors.gold
+                        : AppColors.primary.withValues(alpha: 0.25),
+                    width: 1.5,
+                  ),
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 180),
+                  transitionBuilder: (child, animation) {
+                    return ScaleTransition(scale: animation, child: child);
+                  },
+                  child: completed
+                      ? const Icon(
+                          Icons.check_rounded,
+                          key: ValueKey('completed'),
+                          size: 16,
+                          color: AppColors.primary,
+                        )
+                      : const SizedBox(key: ValueKey('incomplete')),
                 ),
               ),
-              child: completed
-                  ? const Icon(
-                      Icons.check_rounded,
-                      size: 16,
-                      color: AppColors.primary,
-                    )
-                  : null,
-            ),
 
-            const SizedBox(width: AppSpacing.md),
+              const SizedBox(width: 13),
 
-            Expanded(
-              child: Text(
-                title,
-                style: AppTextStyles.body.copyWith(
-                  color: completed ? AppColors.goldDark : AppColors.primary,
-                  decoration: completed ? TextDecoration.lineThrough : null,
+              Expanded(
+                child: AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeOutCubic,
+                  style: AppTextStyles.body.copyWith(
+                    color: completed ? AppColors.muted : AppColors.primary,
+                    fontWeight: completed ? FontWeight.w500 : FontWeight.w600,
+                    decoration: completed ? TextDecoration.lineThrough : null,
+                    decorationColor: AppColors.muted,
+                  ),
+                  child: Text(title),
                 ),
               ),
-            ),
 
-            if (completed)
-              Text(
-                'DONE',
-                style: AppTextStyles.label.copyWith(
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 180),
+                opacity: completed ? 1 : 0,
+                child: const Icon(
+                  Icons.check_circle_outline_rounded,
+                  size: 18,
                   color: AppColors.goldDark,
-                  fontSize: 10,
                 ),
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );

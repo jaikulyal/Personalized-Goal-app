@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../goals/presentation/screens/create_goal_screen.dart';
 
 class AppAddButton extends StatelessWidget {
-  final VoidCallback? onPressed;
-
-  const AppAddButton({super.key, this.onPressed});
+  const AppAddButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +12,11 @@ class AppAddButton extends StatelessWidget {
       color: Colors.transparent,
       shape: const CircleBorder(),
       child: InkWell(
-        onTap: onPressed,
+        onTap: () {
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const CreateGoalScreen()));
+        },
         customBorder: const CircleBorder(),
         child: Container(
           width: 56,
