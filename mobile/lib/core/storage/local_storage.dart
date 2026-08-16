@@ -11,6 +11,10 @@ class LocalStorage {
     if (!Hive.isBoxOpen(StorageKeys.goalsBox)) {
       await Hive.openBox(StorageKeys.goalsBox);
     }
+
+    if (!Hive.isBoxOpen(StorageKeys.actionsBox)) {
+      await Hive.openBox(StorageKeys.actionsBox);
+    }
   }
 
   static Box<dynamic> get goalsBox {
@@ -19,5 +23,13 @@ class LocalStorage {
     }
 
     return Hive.box<dynamic>(StorageKeys.goalsBox);
+  }
+
+  static Box<dynamic> get actionsBox {
+    if (!Hive.isBoxOpen(StorageKeys.actionsBox)) {
+      throw StateError('Actions storage has not been initialized.');
+    }
+
+    return Hive.box<dynamic>(StorageKeys.actionsBox);
   }
 }

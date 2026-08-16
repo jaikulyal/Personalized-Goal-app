@@ -45,10 +45,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
     try {
       final goals = await _dataSource.getGoals();
 
+      final now = DateTime.now();
+
       final summaries = goals
-          .map(
-            (goal) => _calculator.createGoalSummary(goal, now: DateTime.now()),
-          )
+          .map((goal) => _calculator.createGoalSummary(goal, now: now))
           .toList();
 
       if (!mounted) return;
@@ -163,7 +163,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         const SizedBox(height: AppSpacing.xxl),
 
         // ------------------------------------------------------------
-        // GOAL PROGRESS
+        // GOAL-LEVEL PROGRESS
         // ------------------------------------------------------------
         _sectionTitle('Goal progress'),
 
@@ -212,50 +212,66 @@ class _ProgressScreenState extends State<ProgressScreen> {
     return Text(title, style: AppTextStyles.title);
   }
 
-  WeeklyProgressSummary _buildWeeklySummary() {
-    final completed = _summaries.fold<int>(
-      0,
-      (total, summary) => total + summary.completedActions,
-    );
+  // ------------------------------------------------------------
+  // WEEKLY SUMMARY
+  // ------------------------------------------------------------
 
-    final missed = _summaries.fold<int>(
-      0,
-      (total, summary) => total + summary.missedActions,
-    );
+  WeeklyProgressSummary _buildWeeklySummary() {
+    final completed = _summaries.fold<int>(0, (total, summary) {
+      return total + summary.completedActions;
+    });
+
+    final missed = _summaries.fold<int>(0, (total, summary) {
+      return total + summary.missedActions;
+    });
+
+    final planned = _summaries.fold<int>(0, (total, summary) {
+      return total + summary.plannedActions;
+    });
 
     return WeeklyProgressSummary(
-      plannedActions: _summaries.length,
+      plannedActions: planned,
       completedActions: completed,
       missedActions: missed,
     );
   }
+
+  // ------------------------------------------------------------
+  // CONSISTENCY
+  // ------------------------------------------------------------
 
   int _calculateCurrentConsistency() {
     if (_summaries.isEmpty) {
       return 0;
     }
 
-    final hasCompletedGoal = _summaries.any(
-      (summary) => summary.completedActions > 0,
-    );
+    int consistencyDays = 0;
 
-    return hasCompletedGoal ? 1 : 0;
+    for (final summary in _summaries) {
+      if (summary.completedActions > 0 && summary.missedActions == 0) {
+        consistencyDays++;
+      }
+    }
+
+    return consistencyDays;
   }
+
+  // ------------------------------------------------------------
+  // MONTHLY PROGRESS
+  // ------------------------------------------------------------
 
   double _calculateMonthlyPercentage() {
     if (_summaries.isEmpty) {
       return 0;
     }
 
-    final completed = _summaries.fold<int>(
-      0,
-      (total, summary) => total + summary.completedActions,
-    );
+    final completed = _summaries.fold<int>(0, (total, summary) {
+      return total + summary.completedActions;
+    });
 
-    final planned = _summaries.fold<int>(
-      0,
-      (total, summary) => total + summary.plannedActions,
-    );
+    final planned = _summaries.fold<int>(0, (total, summary) {
+      return total + summary.plannedActions;
+    });
 
     if (planned == 0) {
       return 0;
@@ -264,6 +280,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
     return ((completed / planned) * 100).clamp(0.0, 100.0);
   }
 }
+
+// ================================================================
+// LOADING STATE
+// ================================================================
 
 class _ProgressLoadingState extends StatelessWidget {
   const _ProgressLoadingState();
@@ -282,6 +302,10 @@ class _ProgressLoadingState extends StatelessWidget {
   }
 }
 
+// ================================================================
+// EMPTY STATE
+// ================================================================
+
 class _EmptyProgressState extends StatelessWidget {
   const _EmptyProgressState();
 
@@ -298,13 +322,17 @@ class _EmptyProgressState extends StatelessWidget {
       child: Column(
         children: [
           const Icon(Icons.insights_outlined, color: AppColors.gold, size: 32),
+
           const SizedBox(height: AppSpacing.md),
+
           Text(
             'Your progress starts here.',
             style: AppTextStyles.title,
             textAlign: TextAlign.center,
           ),
+
           const SizedBox(height: AppSpacing.xs),
+
           Text(
             'Create a goal and start taking action.',
             style: AppTextStyles.bodySmall,
