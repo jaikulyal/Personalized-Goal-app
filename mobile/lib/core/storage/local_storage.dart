@@ -1,4 +1,4 @@
-import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 
 import 'storage_keys.dart';
 
@@ -14,6 +14,10 @@ class LocalStorage {
 
     if (!Hive.isBoxOpen(StorageKeys.actionsBox)) {
       await Hive.openBox(StorageKeys.actionsBox);
+    }
+
+    if (!Hive.isBoxOpen(StorageKeys.profileBox)) {
+      await Hive.openBox(StorageKeys.profileBox);
     }
   }
 
@@ -31,5 +35,13 @@ class LocalStorage {
     }
 
     return Hive.box<dynamic>(StorageKeys.actionsBox);
+  }
+
+  static Box<dynamic> get profileBox {
+    if (!Hive.isBoxOpen(StorageKeys.profileBox)) {
+      throw StateError('Profile storage has not been initialized.');
+    }
+
+    return Hive.box<dynamic>(StorageKeys.profileBox);
   }
 }
