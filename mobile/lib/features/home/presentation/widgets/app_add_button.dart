@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../goals/presentation/screens/create_goal_screen.dart';
 
 class AppAddButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -12,30 +11,29 @@ class AppAddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      shape: const CircleBorder(),
       child: InkWell(
-        onTap: () async {
-          final created = await Navigator.of(context).push<bool>(
-            MaterialPageRoute(builder: (_) => const CreateGoalScreen()),
-          );
-
-          if (created == true) {
-            // Home will reload the newly created goal.
-          }
-        },
+        onTap: onPressed,
         customBorder: const CircleBorder(),
+        splashColor: AppColors.primary.withValues(alpha: 0.12),
         child: Container(
-          width: 56,
-          height: 56,
+          width: 64,
+          height: 64,
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: AppColors.gold,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.background, width: 4),
+            border: Border.all(color: AppColors.surface, width: 5),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.18),
+                blurRadius: 18,
+                offset: const Offset(0, 7),
+              ),
+            ],
           ),
           child: const Icon(
             Icons.add_rounded,
-            color: AppColors.surface,
-            size: 25,
+            color: AppColors.primary,
+            size: 30,
           ),
         ),
       ),

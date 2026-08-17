@@ -5,6 +5,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import 'login_screen.dart';
 import '../../data/auth_repository.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -161,6 +162,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintStyle: TextStyle(
                     color: AppColors.primary.withValues(alpha: 0.35),
                   ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 18,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                    ),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    borderSide: BorderSide(color: AppColors.gold, width: 1.6),
+                  ),
                 ),
               ),
 
@@ -178,6 +201,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintText: 'your@example.com',
                   hintStyle: TextStyle(
                     color: AppColors.primary.withValues(alpha: 0.35),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 18,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                    ),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    borderSide: BorderSide(color: AppColors.gold, width: 1.6),
                   ),
                 ),
               ),
@@ -197,6 +242,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintStyle: TextStyle(
                     color: AppColors.secondary.withValues(alpha: 0.65),
                   ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 18,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                    ),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    borderSide: BorderSide(color: AppColors.gold, width: 1.6),
+                  ),
                   suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
@@ -205,15 +272,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                     icon: Icon(
                       _obscurePassword
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
+                          ? FontAwesomeIcons.eye
+                          : FontAwesomeIcons.eyeSlash,
                       color: AppColors.secondary.withValues(alpha: 0.65),
                     ),
                   ),
                 ),
               ),
 
-              const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.xxxl),
 
               SizedBox(
                 width: double.infinity,
@@ -342,10 +409,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ],
                               ).createShader(bounds);
                             },
+
                             //blendMode: BlendMode.srcIn,
-                            child: const Icon(
-                              Icons.g_mobiledata_rounded,
-                              size: 27,
+                            //FaIcon(FontAwesomeIcons.google);
+                            child: const FaIcon(
+                              FontAwesomeIcons.google,
+                              color: AppColors
+                                  .gold, // Optional: Choose your preferred color
+                              size: 18.0, // Optional: Set the icon size
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -422,6 +493,14 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(label, style: AppTextStyles.label);
+    return Text(
+      label,
+      style: AppTextStyles.label.copyWith(
+        color: AppColors.gold, //const Color.fromARGB(134, 212, 175, 55),
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 1.2,
+      ),
+    );
   }
 }

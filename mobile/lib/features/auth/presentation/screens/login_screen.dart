@@ -6,6 +6,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import 'register_screen.dart';
 import '../../data/auth_repository.dart';
 import '/core/navigation/main_shell.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -110,7 +111,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: AppSpacing.xxl),
 
-              Text('EMAIL', style: AppTextStyles.label),
+              Text(
+                'EMAIL',
+                style: AppTextStyles.label.copyWith(color: AppColors.gold),
+              ),
 
               const SizedBox(height: AppSpacing.sm),
 
@@ -118,12 +122,44 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(hintText: 'you@example.com'),
+                decoration: InputDecoration(
+                  hintText: 'you@example.com',
+                  hintStyle: TextStyle(
+                    color: AppColors.primary.withValues(alpha: 0.35),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 18,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: const BorderSide(
+                      color: AppColors.gold,
+                      width: 1.6,
+                    ),
+                  ),
+                ),
               ),
-
               const SizedBox(height: AppSpacing.lg),
 
-              Text('PASSWORD', style: AppTextStyles.label),
+              Text(
+                'PASSWORD',
+                style: AppTextStyles.label.copyWith(color: AppColors.gold),
+              ),
 
               const SizedBox(height: AppSpacing.sm),
 
@@ -133,6 +169,34 @@ class _LoginScreenState extends State<LoginScreen> {
                 textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
                   hintText: 'Enter your password',
+                  hintStyle: TextStyle(
+                    color: AppColors.primary.withValues(alpha: 0.35),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 18,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: const BorderSide(
+                      color: AppColors.gold,
+                      width: 1.6,
+                    ),
+                  ),
                   suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
@@ -141,8 +205,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     icon: Icon(
                       _obscurePassword
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
+                          ? FontAwesomeIcons.eye
+                          : FontAwesomeIcons.eyeSlash,
+                      color: AppColors.secondary.withValues(alpha: 0.65),
                     ),
                   ),
                 ),
@@ -288,9 +353,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               ).createShader(bounds);
                             },
                             //blendMode: BlendMode.srcIn,
-                            child: const Icon(
-                              Icons.g_mobiledata_rounded,
-                              size: 27,
+                            child: const FaIcon(
+                              FontAwesomeIcons.google,
+                              color: AppColors
+                                  .gold, // Optional: Choose your preferred color
+                              size: 18.0, // Optional: Set the icon size
                             ),
                           ),
                           const SizedBox(width: 10),

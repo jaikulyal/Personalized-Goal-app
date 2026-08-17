@@ -17,10 +17,10 @@ class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
 
   @override
-  State<ProgressScreen> createState() => _ProgressScreenState();
+  State<ProgressScreen> createState() => ProgressScreenState();
 }
 
-class _ProgressScreenState extends State<ProgressScreen> {
+class ProgressScreenState extends State<ProgressScreen> {
   final ProgressLocalDataSource _dataSource = ProgressLocalDataSource();
   final ProgressCalculator _calculator = const ProgressCalculator();
 
@@ -32,10 +32,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
   @override
   void initState() {
     super.initState();
-    _loadProgress();
+    refreshProgress();
   }
 
-  Future<void> _loadProgress() async {
+  Future<void> refreshProgress() async {
     if (mounted) {
       setState(() {
         _isLoading = true;
@@ -77,7 +77,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         child: RefreshIndicator(
           color: AppColors.gold,
           backgroundColor: AppColors.primary,
-          onRefresh: _loadProgress,
+          onRefresh: refreshProgress,
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
