@@ -9,6 +9,7 @@ import '../widgets/add_action_form.dart';
 import '../widgets/add_action_header.dart';
 import '../widgets/add_action_save_button.dart';
 import '../widgets/add_action_top_bar.dart';
+import '../../../../core/notification/notification_service.dart';
 
 class AddActionScreen extends StatefulWidget {
   final String goalId;
@@ -151,7 +152,11 @@ class _AddActionScreenState extends State<AddActionScreen> {
       );
 
       await _dataSource.saveAction(action);
-
+      await NotificationService.instance.scheduleActionReminder(
+        actionId: action.id,
+        actionTitle: action.title,
+        scheduledDate: action.scheduledDate,
+      );
       if (!mounted) {
         return;
       }

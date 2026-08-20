@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'core/storage/local_storage.dart';
 
+import 'core/storage/local_storage.dart';
 import 'core/theme/app_theme.dart';
+import 'core/notification/notification_service.dart';
 import 'features/auth/presentation/screens/welcome_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await LocalStorage.init();
+
+  await NotificationService.instance.initialize();
+  await NotificationService.instance.requestPermissions();
 
   runApp(const GoalApp());
 }
